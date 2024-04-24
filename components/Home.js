@@ -16,6 +16,7 @@ useEffect(() => {
   fetch('https://mymoviz-backend-ten-sigma.vercel.app/movies')
     .then(response => response.json())
     .then(data => {
+      console.log(data)
       const formattedData = data.results.map(movie => ({
         
         title: movie.title,
