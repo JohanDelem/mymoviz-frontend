@@ -24,7 +24,7 @@ useEffect(() => {
         voteAverage: movie.vote_average,
         voteCount: movie.vote_count,
         // Tronquer l'aperçu à 250 caractères et ajouter "..." à la fin si nécessaire
-        overview: movie.overview.length > 250 ? movie.overview.substring(0, 250) + "..." : movie.overview,
+        overview: movie.overview.length > 250 ? movie.overview.substring(0, 230) + "..." : movie.overview,
       }));
       
       setMoviesData(formattedData); 
