@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar, faVideo } from '@fortawesome/free-solid-svg-icons';
 import styles from '../styles/Movie.module.css';
+import { useRouter } from 'next/router';
 
 function Movie(props) {
   const [watchCount, setWatchCount] = useState(0);
   const [personalNote, setPersonalNote] = useState(0);
-
+  const [isHovered, setIsHovered] = useState(false);
+  const router = useRouter();
   // Average evaluation
   const stars = [];
   for (let i = 0; i < 10; i++) {
@@ -44,17 +46,38 @@ function Movie(props) {
     }
     personalStars.push(<FontAwesomeIcon key={i} icon={faStar} onClick={() => setPersonalNote(i + 1)} style={style} className="note" />);
   }
-
+  const getColorByRate = (voteAverage) => {
+    if (voteAverage >= 7.5) {
+      return { 'color': 'green' };
+    } else if (voteAverage >= 6.5) {
+      return { 'color': 'orange' };
+    } else {
+      return { 'color': 'red' };
+    }
+  };
+  
+  const handleNavigation = (data) => {
+    router.push(`/movies/${data.id}`);
+  };
+  
   return (
     <div className={styles.card}>
-      <img className={styles.image} src={props.poster} alt={props.title} />
+        <a onClick={() => handleNavigation(props)}>
+          <img
+            className={styles.image}
+            src={isHovered ? props.poster : props.poster}
+            alt={props.title}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          />
+        </a>
       <div className={styles.textContainer}>
         <div>
           <span className={styles.name}>{props.title}</span>
           <p className={styles.description}>{props.overview}</p>
         </div>
         <div className={styles.iconContainer}>
-          <span className={styles.vote}>{stars} ({props.voteCount})</span>
+          <span className={styles.vote}>{stars} <em style={getColorByRate(props.voteAverage)}>{props.voteAverage.toFixed(2) }</em> ({props.voteCount})</span>
           <span>{personalStars} ({personalNote})</span>
           <span><FontAwesomeIcon icon={faVideo} onClick={() => handleWatchMovie()} style={videoIconStyle} className="watch" /> ({watchCount})</span>
           <span><FontAwesomeIcon icon={faHeart} onClick={() => handleLikeMovie()} style={heartIconStyle} className="like" /></span>

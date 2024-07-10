@@ -7,38 +7,40 @@ import 'antd/dist/antd.css';
 import styles from '../styles/Home.module.css';
 
 function Home() {
-
-
-// hook effect
-const [moviesData, setMoviesData] = useState([]);
-
-useEffect(() => {
-  fetch('https://mymoviz-backend-ten-sigma.vercel.app/movies')
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      const formattedData = data.results.map(movie => ({
-        
-        title: movie.title,
-        poster: `https://image.tmdb.org/t/p/w500/${movie.poster_path}`, 
-        voteAverage: movie.vote_average,
-        voteCount: movie.vote_count,
-        // Tronquer l'aperçu à 250 caractères et ajouter "..." à la fin si nécessaire
-        overview: movie.overview.length > 230 ? movie.overview.substring(0, 230) + "..." : movie.overview,
-      }));
-      
-      setMoviesData(formattedData); 
-    });
-}, []);
-
-
-
-
-
-
+  const [moviesData, setMoviesData] = useState([]);
+  const [page, setPage] = useState(1);
   const [likedMovies, setLikedMovies] = useState([]);
 
-  // Liked movies (inverse data flow)
+  const createSlug = (title) => {
+    return title
+      .toLowerCase()
+      .replace(/ /g, '-') 
+      .replace(/[^\w-]+/g, ''); 
+  };
+
+  useEffect(() => {
+    fetchMovies(page);
+  }, [page]);
+  const apiExemple = `https://api.themoviedb.org/3/movie/popular?api_key=4e44d9029b1270a757cddc766a1bcb63&page=${page}`;
+  const fetchMovies = (page) => {
+    fetch(`https://mymoviz-backend-ten-sigma.vercel.app/movies?page=${page}`)
+      .then(response => response.json())
+      .then(data => {
+        const formattedData = data.results.map(movie => ({
+          title: movie.title,
+          slug : createSlug(movie.title),
+          id: movie.id,
+          poster: `https://image.tmdb.org/t/p/w1280/${movie.poster_path}`, 
+          poster2: `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`,
+          voteAverage: movie.vote_average,
+          voteCount: movie.vote_count,
+          overview: movie.overview.length > 230 ? movie.overview.substring(0, 230) + "..." : movie.overview,
+        }));
+        
+        setMoviesData(formattedData); 
+      });
+  };
+
   const updateLikedMovies = (movieTitle) => {
     if (likedMovies.find(movie => movie === movieTitle)) {
       setLikedMovies(likedMovies.filter(movie => movie !== movieTitle));
@@ -62,20 +64,18 @@ useEffect(() => {
     </div>
   );
 
-  // Movies list
-  /*
-   const moviesData = [
-     { title: 'Forrest Gump', poster: 'forrestgump.jpg', voteAverage: 9.2, voteCount: 22_705, overview: 'A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case.' },
-     { title: 'The Dark Knight', poster: 'thedarkknight.jpg', voteAverage: 8.5, voteCount: 27_547, overview: 'Batman raises the stakes in his war on crime and sets out to dismantle the remaining criminal organizations that plague the streets.' },
-     { title: 'Your name', poster: 'yourname.jpg', voteAverage: 8.5, voteCount: 8_691, overview: 'High schoolers Mitsuha and Taki are complete strangers living separate lives. But one night, they suddenly switch places.' },
-     { title: 'Iron Man', poster: 'ironman.jpg', voteAverage: 7.6, voteCount: 22_7726, overview: 'After being held captive in an Afghan cave, billionaire engineer Tony Stark creates a unique weaponized suit of armor to fight evil.' },
-     { title: 'Inception', poster: 'inception.jpg', voteAverage: 8.4, voteCount: 31_546, overview: 'Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life.' },
-   ];
- */
   const movies = moviesData.map((data, i) => {
     const isLiked = likedMovies.some(movie => movie === data.title);
-    return <Movie key={i} updateLikedMovies={updateLikedMovies} isLiked={isLiked} title={data.title} overview={data.overview} poster={data.poster} voteAverage={data.voteAverage} voteCount={data.voteCount} />;
+    return <Movie key={i} updateLikedMovies={updateLikedMovies} id={data.id} isLiked={isLiked} slug={data.slug} title={data.title} overview={data.overview} poster={data.poster} poster2={data.poster2} voteAverage={data.voteAverage} voteCount={data.voteCount} />;
   });
+
+  const handleNextPage = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPage(prevPage => (prevPage > 1 ? prevPage - 1 : 1));
+  };
 
   return (
     <div className={styles.main}>
@@ -91,6 +91,10 @@ useEffect(() => {
       <div className={styles.title}>LAST RELEASES</div>
       <div className={styles.moviesContainer}>
         {movies}
+      </div>
+      <div className={styles.pagination}>
+        <Button onClick={handlePrevPage} disabled={page === 1}>Previous</Button>
+        <Button onClick={handleNextPage}>Next</Button>
       </div>
     </div>
   );

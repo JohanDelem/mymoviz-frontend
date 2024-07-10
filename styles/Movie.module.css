@@ -7,10 +7,15 @@
 }
 
 .image {
-	width: 220px;
-	border-radius: 10px 10px 0px 0px;
+    width: 220px;
+    border-radius: 10px 10px 0px 0px;
+    transition: transform 0.3s ease; /* Smooth transition for transform */
 }
 
+.image:hover {
+    transform: scale(1.2); 
+	cursor: pointer ;
+}
 .textContainer {
 	display: flex;
 	flex-direction: column;
