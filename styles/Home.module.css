@@ -82,3 +82,14 @@
 .crossIcon {
 	cursor: pointer;
 }
+.pagination {
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+  }
+  
+  .pagination button {
+	margin: 0 10px;
+	background-color: #021334;
+    color: #efebeb;
+  }

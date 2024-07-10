@@ -1,14 +1,14 @@
-import React from "react";
-import DetailsMovies from "../components/DetailsMovies";
-// import Footer from "../components/Footer";
+// import React from "react";
+// import DetailsMovies from "../components/DetailsMovies";
+// // import Footer from "../components/Footer";
 
-const DetailsPage = () => {
-  return (
-    <div>
-      <DetailsMovies />
-      {/* <Footer /> */}
-    </div>
-  );
-};
+// const DetailsPage = () => {
+//   return (
+//     <div>
+//       <DetailsMovies />
+//       {/* <Footer /> */}
+//     </div>
+//   );
+// };
 
-export default DetailsPage;
+// export default DetailsPage;

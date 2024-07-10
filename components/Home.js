@@ -23,7 +23,7 @@ function Home() {
   }, [page]);
   const apiExemple = `https://api.themoviedb.org/3/movie/popular?api_key=4e44d9029b1270a757cddc766a1bcb63&page=${page}`;
   const fetchMovies = (page) => {
-    fetch(`https://mymoviz-backend-ten-sigma.vercel.app/movies?page=${page}`)
+    fetch(apiExemple)
       .then(response => response.json())
       .then(data => {
         const formattedData = data.results.map(movie => ({

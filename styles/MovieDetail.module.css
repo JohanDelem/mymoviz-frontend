@@ -4,8 +4,8 @@
     align-items: center;
     padding: 20px;
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: #021334;
+    color: #efebeb;
   }
   
   .banner {
@@ -32,7 +32,7 @@
   .tagline {
     font-size: 1.5rem;
     font-weight: bold;
-    color: black;
+    color: #efebeb;
     margin-top: -60px;
     margin-right: 870px;
     
@@ -44,6 +44,7 @@
     font-weight: bold;
     margin-bottom: 10px;
     margin-left: -150px;
+    color: #efebeb;
   }
   
   .overview {
