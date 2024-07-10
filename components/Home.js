@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Popover, Button } from 'antd';
+import { Popover, Button, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import Movie from './Movie';
@@ -10,6 +10,7 @@ function Home() {
   const [moviesData, setMoviesData] = useState([]);
   const [page, setPage] = useState(1);
   const [likedMovies, setLikedMovies] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const createSlug = (title) => {
     return title
@@ -19,10 +20,15 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchMovies(page);
-  }, [page]);
-  const apiExemple = `https://api.themoviedb.org/3/movie/popular?api_key=4e44d9029b1270a757cddc766a1bcb63&page=${page}`;
+    if (searchQuery.trim() === "") {
+      fetchMovies(page);
+    } else {
+      fetchSearchMovies(searchQuery, page);
+    }
+  }, [page, searchQuery]);
+
   const fetchMovies = (page) => {
+    const apiExemple = `https://api.themoviedb.org/3/movie/popular?api_key=4e44d9029b1270a757cddc766a1bcb63&page=${page}`;
     fetch(apiExemple)
       .then(response => response.json())
       .then(data => {
@@ -34,7 +40,29 @@ function Home() {
           poster2: `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`,
           voteAverage: movie.vote_average,
           voteCount: movie.vote_count,
+          releaseDate: movie.release_date,
           overview: movie.overview.length > 230 ? movie.overview.substring(0, 230) + "..." : movie.overview,
+        }));
+        
+        setMoviesData(formattedData); 
+      });
+  };
+
+  const fetchSearchMovies = (query, page) => {
+    const searchEndpoint = `https://api.themoviedb.org/3/search/movie?api_key=4e44d9029b1270a757cddc766a1bcb63&query=${query}&page=${page}`;
+    fetch(searchEndpoint)
+      .then(response => response.json())
+      .then(data => {
+        const formattedData = data.results.map(movie => ({
+          title: movie.title,
+          slug : createSlug(movie.title),
+          id: movie.id,
+          poster: `https://image.tmdb.org/t/p/w1280/${movie.poster_path}`, 
+          poster2: `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`,
+          voteAverage: movie.vote_average,
+          voteCount: movie.vote_count,
+          releaseDate: movie.release_date,
+          overview: movie.overview.length > 180 ? movie.overview.substring(0, 180) + "..." : movie.overview,
         }));
         
         setMoviesData(formattedData); 
@@ -66,7 +94,7 @@ function Home() {
 
   const movies = moviesData.map((data, i) => {
     const isLiked = likedMovies.some(movie => movie === data.title);
-    return <Movie key={i} updateLikedMovies={updateLikedMovies} id={data.id} isLiked={isLiked} slug={data.slug} title={data.title} overview={data.overview} poster={data.poster} poster2={data.poster2} voteAverage={data.voteAverage} voteCount={data.voteCount} />;
+    return <Movie key={i} updateLikedMovies={updateLikedMovies} id={data.id} isLiked={isLiked} slug={data.slug} title={data.title} releaseDate={data.releaseDate} overview={data.overview} poster={data.poster} poster2={data.poster2} voteAverage={data.voteAverage} voteCount={data.voteCount} />;
   });
 
   const handleNextPage = () => {
@@ -88,6 +116,12 @@ function Home() {
           <Button>♥ {likedMovies.length} movie(s)</Button>
         </Popover>
       </div>
+      <Input
+        placeholder="Search movies..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className={styles.searchBar}
+      />
       <div className={styles.title}>LAST RELEASES</div>
       <div className={styles.moviesContainer}>
         {movies}

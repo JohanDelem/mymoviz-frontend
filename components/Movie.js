@@ -75,6 +75,7 @@ function Movie(props) {
         <div>
           <span className={styles.name}>{props.title}</span>
           <p className={styles.description}>{props.overview}</p>
+          <p className={styles.releaseDate}>Release date: {props.releaseDate}</p>
         </div>
         <div className={styles.iconContainer}>
           <span className={styles.vote}>{stars} <em style={getColorByRate(props.voteAverage)}>{props.voteAverage.toFixed(2) }</em> ({props.voteCount})</span>

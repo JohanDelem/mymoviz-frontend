@@ -4,6 +4,7 @@
 	justify-content: flex-start;
 	width: 220px;
 	margin: 20px;
+	padding-bottom: 25px;
 }
 
 .image {
@@ -30,6 +31,9 @@
 .description {
 	font-weight: 300;
 	font-size: 14px;
+}
+.releaseDate{
+	font-weight: 300;
 }
 
 .iconContainer {

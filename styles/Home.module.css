@@ -93,3 +93,10 @@
 	background-color: #021334;
     color: #efebeb;
   }
+  .searchBar {
+	margin-left: 500px ;
+	margin-top: 50px ;
+	align-items: center;
+	width: 100%;
+	max-width: 600px;
+  }
