@@ -80,7 +80,9 @@
 
   .poster {
     max-width: 300px;
-    margin-right: 20px;
+    margin-left: 8vh;
+    margin-right: 8vh;
+ 
   }
 
   .details {
@@ -99,7 +101,7 @@
 
   .overview {
     font-size: 1.1rem;
-    padding: 0;
+    padding-top: 8vh;
   }
 }
 
