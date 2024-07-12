@@ -1,22 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Popover, Button, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/router';
 import Movie from './Movie';
 import 'antd/dist/antd.css';
 import styles from '../styles/Home.module.css';
+import { AppContext } from '../context/AppContext';
 
 function Home() {
+  const { mode, setMode } = useContext(AppContext);
+  const router = useRouter();
+  const { page: queryPage } = router.query;
   const [moviesData, setMoviesData] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(queryPage ? parseInt(queryPage) : 1);
   const [likedMovies, setLikedMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const createSlug = (title) => {
     return title
       .toLowerCase()
-      .replace(/ /g, '-') 
-      .replace(/[^\w-]+/g, ''); 
+      .replace(/ /g, '-')
+      .replace(/[^\w-]+/g, '');
   };
 
   useEffect(() => {
@@ -25,26 +30,28 @@ function Home() {
     } else {
       fetchSearchMovies(searchQuery, page);
     }
-  }, [page, searchQuery]);
+  }, [page, searchQuery, mode]);
 
   const fetchMovies = (page) => {
-    const apiExemple = `https://api.themoviedb.org/3/movie/popular?api_key=4e44d9029b1270a757cddc766a1bcb63&page=${page}`;
-    fetch(apiExemple)
+    const frApi = `https://api.themoviedb.org/3/movie/now_playing?api_key=4e44d9029b1270a757cddc766a1bcb63&language=fr-FR&page=${page}`;
+    const enApi = `https://api.themoviedb.org/3/movie/now_playing?api_key=4e44d9029b1270a757cddc766a1bcb63&page=${page}`;
+
+    fetch(mode === 'FR' ? frApi : enApi)
       .then(response => response.json())
       .then(data => {
         const formattedData = data.results.map(movie => ({
           title: movie.title,
-          slug : createSlug(movie.title),
+          slug: createSlug(movie.title),
           id: movie.id,
-          poster: `https://image.tmdb.org/t/p/w1280/${movie.poster_path}`, 
+          poster: `https://image.tmdb.org/t/p/w1280/${movie.poster_path}`,
           poster2: `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`,
           voteAverage: movie.vote_average,
           voteCount: movie.vote_count,
           releaseDate: movie.release_date,
           overview: movie.overview.length > 230 ? movie.overview.substring(0, 230) + "..." : movie.overview,
         }));
-        
-        setMoviesData(formattedData); 
+
+        setMoviesData(formattedData);
       });
   };
 
@@ -55,17 +62,17 @@ function Home() {
       .then(data => {
         const formattedData = data.results.map(movie => ({
           title: movie.title,
-          slug : createSlug(movie.title),
+          slug: createSlug(movie.title),
           id: movie.id,
-          poster: `https://image.tmdb.org/t/p/w1280/${movie.poster_path}`, 
+          poster: `https://image.tmdb.org/t/p/w1280/${movie.poster_path}`,
           poster2: `https://image.tmdb.org/t/p/w1280/${movie.backdrop_path}`,
           voteAverage: movie.vote_average,
           voteCount: movie.vote_count,
           releaseDate: movie.release_date,
           overview: movie.overview.length > 180 ? movie.overview.substring(0, 180) + "..." : movie.overview,
         }));
-        
-        setMoviesData(formattedData); 
+
+        setMoviesData(formattedData);
       });
   };
 
@@ -98,11 +105,17 @@ function Home() {
   });
 
   const handleNextPage = () => {
-    setPage(prevPage => prevPage + 1);
+    const newPage = page + 1;
+    setPage(newPage);
+    router.push(`/?page=${newPage}`, undefined, { shallow: true });
   };
 
   const handlePrevPage = () => {
-    setPage(prevPage => (prevPage > 1 ? prevPage - 1 : 1));
+    if (page > 1) {
+      const newPage = page - 1;
+      setPage(newPage);
+      router.push(`/?page=${newPage}`, undefined, { shallow: true });
+    }
   };
 
   return (
@@ -111,6 +124,10 @@ function Home() {
         <div className={styles.logocontainer}>
           <img src="logo.png" alt="Logo" />
           <img className={styles.logo} src="logoletter.png" alt="Letter logo" />
+        </div>
+        <div className={styles.languageButtons}>
+          <Button onClick={() => setMode('FR')}>Français</Button>
+          <Button onClick={() => setMode('EN')}>English</Button>
         </div>
         <Popover title="Liked movies" content={popoverContent} className={styles.popover} trigger="click">
           <Button>♥ {likedMovies.length} movie(s)</Button>
