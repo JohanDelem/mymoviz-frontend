@@ -66,9 +66,9 @@ function Serie(props) {
     }
   };
 
-  const handleNavigation = (data) => {
-    router.push(`/series/${data.id}-${data.slug}`);
-  };
+//   const handleNavigation = (data) => {
+//     router.push(`/series/${data.id}-${data.slug}`);
+//   };
 
   return (
     <div className={styles.card}>
