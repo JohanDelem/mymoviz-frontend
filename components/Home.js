@@ -17,6 +17,8 @@ function Home() {
   const [likedMovies, setLikedMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const titleText = mode === 'FR' ? "Sortie récemment" : "Last release";
+
   const createSlug = (title) => {
     return title
       .toLowerCase()
@@ -134,18 +136,19 @@ function Home() {
         </Popover>
       </div>
       <Input
-        placeholder="Search movies..."
+        placeholder="Search ..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className={styles.searchBar}
       />
-      <div className={styles.title}>LAST RELEASES</div>
+      <div className={styles.title}>{titleText}</div>
       <div className={styles.moviesContainer}>
         {movies}
       </div>
       <div className={styles.pagination}>
         <Button onClick={handlePrevPage} disabled={page === 1}>Previous</Button>
         <Button onClick={handleNextPage}>Next</Button>
+        page {page}
       </div>
     </div>
   );
